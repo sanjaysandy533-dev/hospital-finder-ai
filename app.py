@@ -6,6 +6,11 @@ app = Flask(__name__)
 hospitals = []
 hospital_id_counter = 1
 
+# Home page
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 # Add hospital
 @app.route("/add", methods=["POST"])
 def add_hospital():
@@ -17,11 +22,11 @@ def add_hospital():
         "specialties": [s.strip().lower() for s in data["specialties"].split(",")],
         "location": data["location"],
         "cost": data["cost"],
-        "insurance": [i.strip() for i in data["insurance"].split(",")]
+        "insurance": [i.strip() for i in data["insurance"].split(",")] if data["insurance"].strip() else ["No insurance"]
     }
     hospitals.append(hospital)
     hospital_id_counter += 1
-    return jsonify({"message": "Hospital added!", "hospital": hospital})
+    return jsonify({"message": "Hospital added successfully!", "hospital": hospital})
 
 # Search hospital
 @app.route("/search", methods=["POST"])
@@ -41,16 +46,12 @@ def search():
 def all_hospitals():
     return jsonify(hospitals)
 
-# Home page
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-if __name__ == "__main__":
-    app.run(debug=True)
-    # Delete hospital
+# Delete hospital
 @app.route("/delete/<int:hospital_id>", methods=["DELETE"])
 def delete_hospital(hospital_id):
     global hospitals
     hospitals = [h for h in hospitals if h["id"] != hospital_id]
     return jsonify({"message": "Hospital deleted!"})
+
+if __name__ == "__main__":
+    app.run(debug=True)
