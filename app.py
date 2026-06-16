@@ -48,3 +48,9 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    # Delete hospital
+@app.route("/delete/<int:hospital_id>", methods=["DELETE"])
+def delete_hospital(hospital_id):
+    global hospitals
+    hospitals = [h for h in hospitals if h["id"] != hospital_id]
+    return jsonify({"message": "Hospital deleted!"})

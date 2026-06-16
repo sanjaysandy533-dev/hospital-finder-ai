@@ -53,10 +53,9 @@ python app.py
 
 ## 👨‍💻 Developer
 
-**Sanjay Sandy**
-- 🌱 Beginner developer learning Python and AI
-- 🎯 Building real projects step by step
-- 💙 Goal: IT job with 1.5L/month salary
+**Sanjay Kumar.V**
+- 🌱 Beginner developer learning Python and AI College final year
+- 🎯 Build this prototype by using Claude AI,the codings where given by ai
 
 ---
 
