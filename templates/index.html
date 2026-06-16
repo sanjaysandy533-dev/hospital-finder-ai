@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Finder AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0f1e, #0d1f3c);
+            min-height: 100vh;
+            color: white;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 30px;
+            background: linear-gradient(90deg, #56ccf2, #2f80ed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p { color: #7a9ab0; font-size: 13px; margin-top: 5px; }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+        .tab {
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #a0c4d8;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #2f80ed, #56ccf2);
+            color: white;
+            border: none;
+        }
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #a0c4d8;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.07);
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-group input::placeholder { color: rgba(255,255,255,0.3); }
+        .btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #2f80ed, #56ccf2);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+        .card h3 { color: #56ccf2; font-size: 16px; margin-bottom: 5px; }
+        .card p { font-size: 13px; color: #ccc; margin: 4px 0; }
+        .badge {
+            display: inline-block;
+            background: rgba(86,204,242,0.1);
+            border: 1px solid rgba(86,204,242,0.2);
+            color: #56ccf2;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 12px;
+            margin: 3px 3px 0 0;
+        }
+        .cost {
+            display: inline-block;
+            background: rgba(47,128,237,0.2);
+            color: #56ccf2;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            display: none;
+        }
+        .success {
+            background: rgba(39,174,96,0.2);
+            border: 1px solid rgba(39,174,96,0.3);
+            color: #6fcf97;
+        }
+        .error {
+            background: rgba(235,87,87,0.2);
+            border: 1px solid rgba(235,87,87,0.3);
+            color: #eb5757;
+        }
+        .empty {
+            text-align: center;
+            color: #7a9ab0;
+            padding: 30px;
+            font-size: 14px;
+        }
+        .id-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            color: #aaa;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div style="font-size:40px">🏥</div>
+    <h1>Hospital Finder AI</h1>
+    <p>Add hospitals · Search by problem · Find the best care</p>
+</div>
+
+<div class="tabs">
+    <button class="tab active" onclick="showPage('add', this)">➕ Add Hospital</button>
+    <button class="tab" onclick="showPage('search', this)">🔍 Search</button>
+    <button class="tab" onclick="showPage('all', this)">🏥 All Hospitals</button>
+</div>
+
+<div class="container">
+
+    <!-- ADD HOSPITAL -->
+    <div class="page active" id="page-add">
+        <div id="add-msg" class="message"></div>
+        <div class="form-group">
+            <label>🏥 Hospital Name</label>
+            <input type="text" id="h-name" placeholder="e.g. Vignesh Physiotherapist Clinic">
+        </div>
+        <div class="form-group">
+            <label>👨‍⚕️ Specialties (comma separated)</label>
+            <input type="text" id="h-spec" placeholder="e.g. knee pain, spinal injury, surgery">
+        </div>
+        <div class="form-group">
+            <label>📍 Location</label>
+            <input type="text" id="h-loc" placeholder="e.g. Ambur">
+        </div>
+        <div class="form-group">
+            <label>💰 Cost Range</label>
+            <input type="text" id="h-cost" placeholder="e.g. Rs.10,000 - Rs.50,000">
+        </div>
+        <div class="form-group">
+            <label>🏦 Insurance (comma separated)</label>
+            <input type="text" id="h-ins" placeholder="e.g. Star Health Insurance">
+        </div>
+        <button class="btn" onclick="addHospital()">➕ Add Hospital</button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="page" id="page-search">
+        <div class="form-group">
+            <label>🤒 What is your health problem?</label>
+            <input type="text" id="s-problem" 
+                placeholder="e.g. knee pain, fever, chest pain..."
+                onkeydown="if(event.key==='Enter') searchHospital()">
+        </div>
+        <button class="btn" onclick="searchHospital()">🔍 Find Hospital</button>
+        <br><br>
+        <div id="search-results"></div>
+    </div>
+
+    <!-- ALL HOSPITALS -->
+    <div class="page" id="page-all">
+        <div id="all-results"></div>
+    </div>
+
+</div>
+
+<script>
+    function showPage(page, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('page-' + page).classList.add('active');
+        el.classList.add('active');
+        if (page === 'all') loadAll();
+    }
+
+    async function addHospital() {
+        const name = document.getElementById('h-name').value.trim();
+        const spec = document.getElementById('h-spec').value.trim();
+        const loc = document.getElementById('h-loc').value.trim();
+        const cost = document.getElementById('h-cost').value.trim();
+        const ins = document.getElementById('h-ins').value.trim();
+        const msg = document.getElementById('add-msg');
+
+        if (!name || !spec || !loc || !cost || !ins) {
+            msg.className = 'message error';
+            msg.style.display = 'block';
+            msg.textContent = '⚠️ Please fill all fields!';
+            return;
+        }
+
+        const res = await fetch('/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, specialties: spec, location: loc, cost, insurance: ins })
+        });
+        const data = await res.json();
+        msg.className = 'message success';
+        msg.style.display = 'block';
+        msg.textContent = '✅ ' + data.message + ' (ID: ' + data.hospital.id + ')';
+
+        document.getElementById('h-name').value = '';
+        document.getElementById('h-spec').value = '';
+        document.getElementById('h-loc').value = '';
+        document.getElementById('h-cost').value = '';
+        document.getElementById('h-ins').value = '';
+    }
+
+    async function searchHospital() {
+        const problem = document.getElementById('s-problem').value.trim();
+        const div = document.getElementById('search-results');
+        if (!problem) {
+            div.innerHTML = '<p class="empty">Please type your health problem!</p>';
+            return;
+        }
+        const res = await fetch('/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ problem })
+        });
+        const data = await res.json();
+        if (data.length === 0) {
+            div.innerHTML = '<p class="empty">😔 No hospitals found! Please add hospitals first!</p>';
+            return;
+        }
+        div.innerHTML = '<p style="color:#a0c4d8;font-size:13px;margin-bottom:10px">🏆 ' + data.length + ' Hospital(s) Found:</p>' +
+            data.map(h => card(h)).join('');
+    }
+
+    async function loadAll() {
+        const res = await fetch('/all');
+        const data = await res.json();
+        const div = document.getElementById('all-results');
+        if (data.length === 0) {
+            div.innerHTML = '<p class="empty">No hospitals yet! Go to Add Hospital tab! 😊</p>';
+            return;
+        }
+        div.innerHTML = data.map(h => card(h)).join('');
+    }
+
+    function card(h) {
+        return `
+        <div class="card">
+            <span class="id-badge">ID: ${h.id}</span>
+            <h3>🏥 ${h.name}</h3>
+            <p>📍 ${h.location}</p>
+            <div class="cost">💰 ${h.cost}</div><br>
+            <p style="font-size:12px;color:#a0c4d8;margin:6px 0 4px">🏦 Insurance:</p>
+            ${h.insurance.map(i => `<span class="badge">${i}</span>`).join('')}
+            <p style="font-size:12px;color:#a0c4d8;margin:8px 0 4px">👨‍⚕️ Specialties:</p>
+            ${h.specialties.map(s => `<span class="badge">${s}</span>`).join('')}
+        </div>`;
+    }
+</script>
+
+</body>
+</html>
