@@ -72,7 +72,7 @@ python app.py
 
 ## 👨‍💻 Developer
 
-**Sanjay Kumar**
+**Sanjay Kumar.V**
 - 🌱 I'm Bsc(CS with AI)final year student
 - 🔨 Building this prototype by the help of claude and with my own experience from my life
 
