@@ -14,6 +14,18 @@
 
 ---
 
+## 💡 What Makes This Different
+
+Many hospital finder apps only show location and contact details. **Hospital Finder AI** goes further by showing:
+
+- 💰 **Estimated treatment cost** for each hospital — so patients know what to expect financially
+- 🏦 **Insurance companies accepted** — so patients can check coverage before visiting
+- 🔍 **Problem-based search** — just describe your health issue, no need to know medical terms
+
+This makes it easier for patients to make informed decisions about where to get treated.
+
+---
+
 ## 🌟 What This App Does
 
 - ➕ **Add hospitals** with name, location, cost and insurance
@@ -44,7 +56,6 @@ python app.py
 ```
 
 ### Step 4 — Open browser
-
 ---
 
 ## 📸 Features
@@ -61,9 +72,9 @@ python app.py
 
 ## 👨‍💻 Developer
 
-**Sanjay Sandy**
-- 🌱 Beginner developer learning Python and AI
-- 🔨 Building this prototype step by step on my own
+**Sanjay Kumar**
+- 🌱 I'm Bsc(CS with AI)final year student
+- 🔨 Building this prototype by the help of claude and with my own experience from my life
 
 ---
 
