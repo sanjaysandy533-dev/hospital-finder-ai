@@ -8,17 +8,24 @@
 
 ---
 
+## 🌐 Live Demo
+
+🔗 **Try it now:** [sanjaykumar.pythonanywhere.com](https://sanjaykumar.pythonanywhere.com)
+
+---
+
 ## 🌟 What This App Does
 
 - ➕ **Add hospitals** with name, location, cost and insurance
 - 🔍 **Search hospitals** by health problem
 - 🏥 **View all hospitals** in the database
+- 🗑️ **Delete hospitals** from the database
 - 💰 Shows **treatment cost range**
 - 🏦 Shows **insurance companies** accepted
 
 ---
 
-## 🚀 How To Run This Project
+## 🚀 How To Run This Project Locally
 
 ### Step 1 — Clone the repository
 ```bash
@@ -37,6 +44,7 @@ python app.py
 ```
 
 ### Step 4 — Open browser
+
 ---
 
 ## 📸 Features
@@ -46,16 +54,16 @@ python app.py
 | Add Hospital | ✅ Done |
 | Search by problem | ✅ Done |
 | View all hospitals | ✅ Done |
-| Delete hospital | 🔄 Coming soon |
-| Deploy online | 🔄 Coming soon |
+| Delete hospital | ✅ Done |
+| Deploy online | ✅ Done |
 
 ---
 
 ## 👨‍💻 Developer
 
-**Sanjay Kumar.V**
-- 🌱 Beginner developer learning Python and AI College final year
-- 🎯 Build this prototype by using Claude AI,the codings where given by ai
+**Sanjay Sandy**
+- 🌱 Beginner developer learning Python and AI
+- 🔨 Building this prototype step by step on my own
 
 ---
 
@@ -65,7 +73,7 @@ python app.py
 |---|---|
 | Day 1 | Python hospital search program |
 | Day 2 | Full website with Flask + HTML |
-| Day 3 | Coming soon... |
+| Day 3 | Added delete feature + deployed live on PythonAnywhere |
 
 ---
 
