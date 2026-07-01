@@ -1,15 +1,42 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
 app = Flask(__name__)
+app.secret_key = "hospital123"
+
+# Simple login credentials
+USERNAME = "admin"
+PASSWORD = "hospital@123"
 
 # This stores all hospitals
 hospitals = []
 hospital_id_counter = 1
 
-# Home page
+# Login page
 @app.route("/")
 def home():
+    if "user" not in session:
+        return redirect(url_for("login"))
     return render_template("index.html")
+
+# Login route
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == USERNAME and password == PASSWORD:
+            session["user"] = username
+            return redirect(url_for("home"))
+        else:
+            error = "Wrong username or password!"
+    return render_template("login.html", error=error)
+
+# Logout
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("login"))
 
 # Add hospital
 @app.route("/add", methods=["POST"])
