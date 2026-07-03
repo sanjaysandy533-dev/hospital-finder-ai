@@ -4,54 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Finder AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0a0f1e, #0d1f3c);
             min-height: 100vh;
+            background: radial-gradient(70% 60% at 50% 12%, #16151f 0%, #08070d 70%), #08070d;
             color: white;
+            overflow-x: hidden;
         }
+
+        /* Aurora background blobs */
+        .aurora {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            filter: blur(80px);
+            opacity: 0.25;
+        }
+        .blob-1 { width: 600px; height: 600px; background: #ff2770; top: -100px; left: -100px; animation: drift1 14s ease-in-out infinite; }
+        .blob-2 { width: 500px; height: 500px; background: #45f3ff; top: 50%; right: -100px; animation: drift2 17s ease-in-out infinite; }
+        .blob-3 { width: 400px; height: 400px; background: #8a5cff; bottom: -100px; left: 40%; animation: drift3 12s ease-in-out infinite; }
+
+        @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(80px,60px)} }
+        @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,-80px)} }
+        @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,50px)} }
+
+        /* Header */
         .header {
+            position: relative;
+            z-index: 1;
             text-align: center;
-            padding: 30px 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 36px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
         }
+        .header-icon { font-size: 44px; margin-bottom: 8px; }
         .header h1 {
-            font-size: 30px;
-            background: linear-gradient(90deg, #56ccf2, #2f80ed);
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #45f3ff, #ff2770, #45f3ff);
+            background-size: 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: shimmer 4s linear infinite;
         }
-        .header p { color: #7a9ab0; font-size: 13px; margin-top: 5px; }
+        @keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+        .header p { color: #7a9ab0; font-size: 13px; margin-top: 4px; }
+        .logout-btn {
+            position: absolute;
+            right: 20px; top: 36px;
+            background: rgba(255,39,112,0.15);
+            border: 1px solid rgba(255,39,112,0.3);
+            color: #ff2770;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover { background: rgba(255,39,112,0.3); }
+
+        /* Tabs */
         .tabs {
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: center;
             gap: 10px;
-            padding: 20px;
+            padding: 24px 20px 16px;
         }
         .tab {
-            padding: 10px 25px;
+            padding: 10px 24px;
             border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.04);
             color: #a0c4d8;
             cursor: pointer;
             font-size: 13px;
+            font-family: "Poppins", sans-serif;
+            transition: all 0.3s;
         }
         .tab.active {
-            background: linear-gradient(135deg, #2f80ed, #56ccf2);
-            color: white;
+            background: linear-gradient(135deg, #ff2770, #45f3ff);
+            color: #0a0a0f;
             border: none;
+            font-weight: 600;
         }
+        .tab:hover:not(.active) { border-color: #45f3ff; color: #45f3ff; }
+
+        /* Container */
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 680px;
             margin: 0 auto;
             padding: 20px;
         }
+
+        /* Pages */
         .page { display: none; }
         .page.active { display: block; }
-        .form-group { margin-bottom: 15px; }
+
+        /* Form Groups */
+        .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block;
             font-size: 13px;
@@ -60,46 +127,74 @@
         }
         .form-group input {
             width: 100%;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.07);
+            padding: 13px 16px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
             color: white;
             font-size: 14px;
+            font-family: "Poppins", sans-serif;
             outline: none;
+            transition: all 0.3s;
         }
-        .form-group input::placeholder { color: rgba(255,255,255,0.3); }
+        .form-group input:focus {
+            border-color: #45f3ff;
+            background: rgba(69,243,255,0.06);
+            box-shadow: 0 0 0 3px rgba(69,243,255,0.12), 0 0 24px rgba(69,243,255,0.15);
+        }
+        .form-group input::placeholder { color: rgba(255,255,255,0.25); }
+
+        /* Button */
         .btn {
             width: 100%;
-            padding: 13px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             border: none;
-            background: linear-gradient(135deg, #2f80ed, #56ccf2);
-            color: white;
+            background: linear-gradient(110deg, #45f3ff, #ff2770);
+            background-size: 200%;
+            background-position: 0%;
+            color: #0a0a0f;
             font-size: 15px;
-            font-weight: bold;
+            font-weight: 700;
+            font-family: "Poppins", sans-serif;
             cursor: pointer;
-            margin-top: 5px;
+            transition: all 0.4s;
+            margin-top: 4px;
         }
+        .btn:hover {
+            background-position: 100%;
+            box-shadow: 0 0 20px rgba(69,243,255,0.4), 0 0 40px rgba(255,39,112,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Cards */
         .card {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 16px;
-            padding: 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 20px;
             margin-bottom: 14px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
             animation: fadeUp 0.4s ease;
         }
+        .card:hover {
+            border-color: rgba(69,243,255,0.3);
+            box-shadow: 0 0 20px rgba(69,243,255,0.1);
+            transform: translateY(-2px);
+        }
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .card h3 { color: #56ccf2; font-size: 16px; margin-bottom: 5px; }
+        .card h3 { color: #45f3ff; font-size: 16px; margin-bottom: 5px; }
         .card p { font-size: 13px; color: #ccc; margin: 4px 0; }
+
         .badge {
             display: inline-block;
-            background: rgba(86,204,242,0.1);
-            border: 1px solid rgba(86,204,242,0.2);
-            color: #56ccf2;
+            background: rgba(69,243,255,0.1);
+            border: 1px solid rgba(69,243,255,0.2);
+            color: #45f3ff;
             border-radius: 20px;
             padding: 3px 10px;
             font-size: 12px;
@@ -117,65 +212,93 @@
         }
         .cost {
             display: inline-block;
-            background: rgba(47,128,237,0.2);
-            color: #56ccf2;
+            background: rgba(255,39,112,0.15);
+            border: 1px solid rgba(255,39,112,0.2);
+            color: #ff6b9d;
             border-radius: 8px;
             padding: 4px 12px;
             font-size: 13px;
             margin: 8px 0;
         }
-        .delete-btn {
-            float: right;
-            background: rgba(235,87,87,0.2);
-            border: 1px solid rgba(235,87,87,0.3);
-            color: #eb5757;
-            border-radius: 8px;
-            padding: 4px 12px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .message {
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 14px;
-            font-size: 13px;
-            display: none;
-        }
-        .success {
-            background: rgba(39,174,96,0.2);
-            border: 1px solid rgba(39,174,96,0.3);
-            color: #6fcf97;
-        }
-        .error {
-            background: rgba(235,87,87,0.2);
-            border: 1px solid rgba(235,87,87,0.3);
-            color: #eb5757;
-        }
-        .empty {
-            text-align: center;
-            color: #7a9ab0;
-            padding: 30px;
-            font-size: 14px;
-        }
         .id-badge {
             display: inline-block;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             color: #aaa;
             border-radius: 6px;
             padding: 2px 8px;
             font-size: 11px;
             margin-bottom: 6px;
         }
+        .delete-btn {
+            float: right;
+            background: rgba(235,87,87,0.15);
+            border: 1px solid rgba(235,87,87,0.3);
+            color: #eb5757;
+            border-radius: 8px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: "Poppins", sans-serif;
+            transition: all 0.3s;
+        }
+        .delete-btn:hover { background: rgba(235,87,87,0.3); }
+
+        /* Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            display: none;
+        }
+        .success {
+            background: rgba(39,174,96,0.15);
+            border: 1px solid rgba(39,174,96,0.3);
+            color: #6fcf97;
+        }
+        .error-msg {
+            background: rgba(235,87,87,0.15);
+            border: 1px solid rgba(235,87,87,0.3);
+            color: #eb5757;
+        }
+        .empty {
+            text-align: center;
+            color: #7a9ab0;
+            padding: 40px;
+            font-size: 14px;
+        }
+
+        /* Section title */
+        .section-title {
+            font-size: 13px;
+            color: #a0c4d8;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div style="font-size:40px">🏥</div>
-    <h1>Hospital Finder AI</h1>
-    <p>Add hospitals · Search by problem · Find the best care</p>
+<!-- Aurora Background -->
+<div class="aurora">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
 </div>
 
+<!-- Header -->
+<div class="header">
+    <div class="header-icon">🏥</div>
+    <h1>Hospital Finder AI</h1>
+    <p>Add hospitals · Search by problem · Find the best care</p>
+    <a href="/logout" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+</div>
+
+<!-- Tabs -->
 <div class="tabs">
     <button class="tab active" onclick="showPage('add', this)">➕ Add Hospital</button>
     <button class="tab" onclick="showPage('search', this)">🔍 Search</button>
@@ -188,37 +311,41 @@
     <div class="page active" id="page-add">
         <div id="add-msg" class="message"></div>
         <div class="form-group">
-            <label>🏥 Hospital Name</label>
+            <label><i class="fa-solid fa-hospital"></i> Hospital Name</label>
             <input type="text" id="h-name" placeholder="e.g. Vignesh Physiotherapist Clinic">
         </div>
         <div class="form-group">
-            <label>👨‍⚕️ Specialties (comma separated)</label>
+            <label><i class="fa-solid fa-stethoscope"></i> Specialties (comma separated)</label>
             <input type="text" id="h-spec" placeholder="e.g. knee pain, spinal injury, surgery">
         </div>
         <div class="form-group">
-            <label>📍 Location</label>
+            <label><i class="fa-solid fa-location-dot"></i> Location</label>
             <input type="text" id="h-loc" placeholder="e.g. Ambur">
         </div>
         <div class="form-group">
-            <label>💰 Cost Range</label>
+            <label><i class="fa-solid fa-indian-rupee-sign"></i> Cost Range</label>
             <input type="text" id="h-cost" placeholder="e.g. Rs.10,000 - Rs.50,000">
         </div>
         <div class="form-group">
-            <label>🏦 Insurance (comma separated)</label>
+            <label><i class="fa-solid fa-shield-halved"></i> Insurance (comma separated)</label>
             <input type="text" id="h-ins" placeholder="e.g. Star Health Insurance">
         </div>
-        <button class="btn" onclick="addHospital()">➕ Add Hospital</button>
+        <button class="btn" onclick="addHospital()">
+            <i class="fa-solid fa-plus"></i> Add Hospital
+        </button>
     </div>
 
     <!-- SEARCH -->
     <div class="page" id="page-search">
         <div class="form-group">
-            <label>🤒 What is your health problem?</label>
+            <label><i class="fa-solid fa-face-sad-tear"></i> What is your health problem?</label>
             <input type="text" id="s-problem"
                 placeholder="e.g. knee pain, fever, chest pain..."
                 onkeydown="if(event.key==='Enter') searchHospital()">
         </div>
-        <button class="btn" onclick="searchHospital()">🔍 Find Hospital</button>
+        <button class="btn" onclick="searchHospital()">
+            <i class="fa-solid fa-magnifying-glass"></i> Find Hospital
+        </button>
         <br><br>
         <div id="search-results"></div>
     </div>
@@ -242,13 +369,13 @@
     async function addHospital() {
         const name = document.getElementById('h-name').value.trim();
         const spec = document.getElementById('h-spec').value.trim();
-        const loc = document.getElementById('h-loc').value.trim();
+        const loc  = document.getElementById('h-loc').value.trim();
         const cost = document.getElementById('h-cost').value.trim();
-        const ins = document.getElementById('h-ins').value.trim();
-        const msg = document.getElementById('add-msg');
+        const ins  = document.getElementById('h-ins').value.trim();
+        const msg  = document.getElementById('add-msg');
 
         if (!name || !spec || !loc || !cost || !ins) {
-            msg.className = 'message error';
+            msg.className = 'message error-msg';
             msg.style.display = 'block';
             msg.textContent = '⚠️ Please fill all fields!';
             return;
@@ -266,16 +393,16 @@
 
         document.getElementById('h-name').value = '';
         document.getElementById('h-spec').value = '';
-        document.getElementById('h-loc').value = '';
+        document.getElementById('h-loc').value  = '';
         document.getElementById('h-cost').value = '';
-        document.getElementById('h-ins').value = '';
+        document.getElementById('h-ins').value  = '';
     }
 
     async function searchHospital() {
         const problem = document.getElementById('s-problem').value.trim();
         const div = document.getElementById('search-results');
         if (!problem) {
-            div.innerHTML = '<p class="empty">Please type your health problem!</p>';
+            div.innerHTML = '<p class="empty">Please type your health problem! 🤒</p>';
             return;
         }
         const res = await fetch('/search', {
@@ -288,7 +415,7 @@
             div.innerHTML = '<p class="empty">😔 No hospitals found! Please add hospitals first!</p>';
             return;
         }
-        div.innerHTML = '<p style="color:#a0c4d8;font-size:13px;margin-bottom:10px">🏆 ' + data.length + ' Hospital(s) Found:</p>' +
+        div.innerHTML = '<p class="section-title">🏆 ' + data.length + ' Hospital(s) Found:</p>' +
             data.map(h => card(h)).join('');
     }
 
@@ -297,23 +424,30 @@
         const data = await res.json();
         const div = document.getElementById('all-results');
         if (data.length === 0) {
-            div.innerHTML = '<p class="empty">No hospitals yet! Go to Add Hospital tab! 😊</p>';
+            div.innerHTML = '<p class="empty">No hospitals yet! Go to Add Hospital tab 😊</p>';
             return;
         }
-        div.innerHTML = data.map(h => card(h)).join('');
+        div.innerHTML = '<p class="section-title">🏥 ' + data.length + ' Hospital(s) in database:</p>' +
+            data.map(h => card(h)).join('');
     }
 
     function card(h) {
         return `
         <div class="card">
             <span class="id-badge">ID: ${h.id}</span>
-            <button class="delete-btn" onclick="deleteHospital(${h.id})">🗑️ Delete</button>
-            <h3>🏥 ${h.name}</h3>
-            <p>📍 ${h.location}</p>
-            <div class="cost">💰 ${h.cost}</div><br>
-            <p style="font-size:12px;color:#a0c4d8;margin:6px 0 4px">🏦 Insurance:</p>
+            <button class="delete-btn" onclick="deleteHospital(${h.id})">
+                <i class="fa-solid fa-trash"></i> Delete
+            </button>
+            <h3><i class="fa-solid fa-hospital"></i> ${h.name}</h3>
+            <p><i class="fa-solid fa-location-dot" style="color:#ff2770"></i> ${h.location}</p>
+            <div class="cost"><i class="fa-solid fa-indian-rupee-sign"></i> ${h.cost}</div><br>
+            <p style="font-size:12px;color:#a0c4d8;margin:6px 0 4px">
+                <i class="fa-solid fa-shield-halved"></i> Insurance:
+            </p>
             ${h.insurance.map(i => `<span class="ins-badge">${i}</span>`).join('')}
-            <p style="font-size:12px;color:#a0c4d8;margin:8px 0 4px">👨‍⚕️ Specialties:</p>
+            <p style="font-size:12px;color:#a0c4d8;margin:8px 0 4px">
+                <i class="fa-solid fa-stethoscope"></i> Specialties:
+            </p>
             ${h.specialties.map(s => `<span class="badge">${s}</span>`).join('')}
         </div>`;
     }
